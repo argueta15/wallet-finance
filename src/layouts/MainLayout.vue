@@ -12,10 +12,9 @@
         />
 
         <q-toolbar-title>
-          Quasar App
+          Smart Wallet IA
         </q-toolbar-title>
 
-        <div>Quasar v{{ $q.version }}</div>
       </q-toolbar>
     </q-header>
 
@@ -25,14 +24,11 @@
       bordered
     >
       <q-list>
-        <q-item-label
-          header
-        >
-          Essential Links
-        </q-item-label>
+        <q-item-label header>Smart Wallet IA</q-item-label>
 
+        <!-- Enlaces esenciales según estado de autenticación -->
         <EssentialLink
-          v-for="link in linksList"
+          v-for="link in filteredLinks"
           :key="link.title"
           v-bind="link"
         />
@@ -46,61 +42,56 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
-import EssentialLink, { EssentialLinkProps } from 'components/EssentialLink.vue';
+import { ref, computed } from 'vue';
+import EssentialLink, { EssentialLinkProps } from '../components/EssentialLink.vue';
+import { useAuthStore } from '../stores/authStore';
 
 defineOptions({
   name: 'MainLayout'
 });
 
+const authStore = useAuthStore();
+
 const linksList: EssentialLinkProps[] = [
   {
-    title: 'Docs',
-    caption: 'quasar.dev',
-    icon: 'school',
-    link: 'https://quasar.dev'
+    title: 'Dashboard',
+    caption: 'Wallet Overview',
+    icon: 'dashboard',
+    link: 'dashboard',
+    requiresAuth: true,
   },
   {
-    title: 'Github',
-    caption: 'github.com/quasarframework',
-    icon: 'code',
-    link: 'https://github.com/quasarframework'
+    title: 'Log out',
+    caption: 'Exit the application',
+    icon: 'logout',
+    link: 'logout',
+    requiresAuth: true,
   },
   {
-    title: 'Discord Chat Channel',
-    caption: 'chat.quasar.dev',
-    icon: 'chat',
-    link: 'https://chat.quasar.dev'
+    title: 'Login',
+    caption: 'Access your account',
+    icon: 'login',
+    link: '/',
+    requiresAuth: false,
   },
   {
-    title: 'Forum',
-    caption: 'forum.quasar.dev',
-    icon: 'record_voice_over',
-    link: 'https://forum.quasar.dev'
+    title: 'Register',
+    caption: 'Create a new account',
+    icon: 'person_add',
+    link: 'register',
+    requiresAuth: false,
   },
-  {
-    title: 'Twitter',
-    caption: '@quasarframework',
-    icon: 'rss_feed',
-    link: 'https://twitter.quasar.dev'
-  },
-  {
-    title: 'Facebook',
-    caption: '@QuasarFramework',
-    icon: 'public',
-    link: 'https://facebook.quasar.dev'
-  },
-  {
-    title: 'Quasar Awesome',
-    caption: 'Community Quasar projects',
-    icon: 'favorite',
-    link: 'https://awesome.quasar.dev'
-  }
 ];
+
+const filteredLinks = computed(() => {
+  return linksList.filter(link => {
+    return authStore.isAuthenticated ? link.requiresAuth : !link.requiresAuth;
+  });
+});
 
 const leftDrawerOpen = ref(false);
 
-function toggleLeftDrawer () {
+function toggleLeftDrawer() {
   leftDrawerOpen.value = !leftDrawerOpen.value;
 }
 </script>

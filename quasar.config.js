@@ -21,7 +21,8 @@ module.exports = configure(function (/* ctx */) {
     // --> boot files are part of "main.js"
     // https://v2.quasar.dev/quasar-cli-vite/boot-files
     boot: [
-      
+      'pinia',
+      'auth',
       
     ],
 
@@ -51,7 +52,7 @@ module.exports = configure(function (/* ctx */) {
         node: 'node20'
       },
 
-      vueRouterMode: 'hash', // available values: 'hash', 'history'
+      vueRouterMode: 'history', // available values: 'hash', 'history'
       // vueRouterBase,
       // vueDevtools,
       // vueOptionsAPI: false,
@@ -66,6 +67,11 @@ module.exports = configure(function (/* ctx */) {
       // minify: false,
       // polyfillModulePreload: true,
       // distDir
+      extendViteConf(viteConf) {
+        viteConf.resolve = viteConf.resolve || {}
+        viteConf.resolve.dedupe = ['vue']
+        viteConf.external = ['vue', 'vue-demi']
+      },
 
       // extendViteConf (viteConf) {},
       // viteVuePluginOptions: {},
